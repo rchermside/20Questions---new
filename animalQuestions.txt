@@ -1,0 +1,1 @@
+{"questions":[{"question":"Are you thinking of an animal?","yesses":0,"nos":0,"maybes":0,"yesGuesses":[],"noGuesses":[],"maybeGuesses":[],"numYesses":{},"numNos":{},"numResponses":{}}],"guesses":["crocodile","bat","cat","coyote","aardvark","dog","spider","elephant"]}
