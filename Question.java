@@ -41,10 +41,14 @@ class Question{
     
   }
 
-
+  public int numGuessesKnown(){
+    return (yesGuesses.size()+noGuesses.size()+maybeGuesses.size());
+  }
   public void addToCount(HashSet<String> keys, HashMap<String, Integer> counts){
     for (String key: keys){ 
-
+      Integer count = counts.getOrDefault(key, 0);
+      count++;
+      counts.put(key,count);
     }
   }
 

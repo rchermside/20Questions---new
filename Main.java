@@ -25,28 +25,27 @@ class Main {
       animalGuesser = gson.fromJson(json, Guesser.class);  
     }
 
-    // //Guess
-     Scanner in = new Scanner(System.in);
-    while (true){
 
-      animalGuesser.smartGuess(in);
+    
+    //Guess
+    Scanner in = new Scanner(System.in);
+    animalGuesser.sortByLeastGuessed(animalGuesser.questions);
+    while (true){
+      System.out.println ("Think of an animal and I will guess it");
+      System.out.println ("Do you want to a smart guesser('s) or random guesser'r'?");
+      String[] validInputs = {"r","s"};
+      String input = Guesser.getInput (in, validInputs);
+      if (input.equals("s")){
+        animalGuesser.smartGuess(in);
+      } else {
+        animalGuesser.randomGuess(in);
+      }
       System.out.println ("Do you want to play again (y/n)");
-      String input = Guesser.getInput(in);
+      input = Guesser.getInput(in);
       if (!(input.equals("yes") || input.equals("y"))){
         break;
       }
     }
-    // test out  chooseSmartQuestion
-    // int i = animalGuesser.chooseSmartQuestion(animalGuesser.guesses, animalGuesser.questions);
-    // System.out.println ("Smart guesser Chose:");
-    // System.out.println (animalGuesser.questions.get(i));
-    // HashSet<String> guesses = new HashSet<String>(animalGuesser.guesses);
-    // guesses.removeAll(animalGuesser.questions.get(i).yesGuesses);
-    // i = animalGuesser.chooseSmartQuestion(guesses, animalGuesser.questions);
-    // System.out.println ("Smart guesser Chose:");
-    // System.out.println (animalGuesser.questions.get(i));
-    
-
     //Prune animalQuestions
 
     //animalGuesser.pruneQuestions(in);

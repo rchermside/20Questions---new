@@ -1,6 +1,13 @@
 import java.util.*;
 import java.io.*;
 
+class UnguessedComparator implements Comparator<Question> {
+    @Override
+    public int compare(Question a, Question b) {
+        return a.numGuessesKnown() < b.numGuessesKnown() ? -1 : a.numGuessesKnown() == b.numGuessesKnown() ? 0 : 1;
+    }
+}
+
 class Response{
   Question question;
   String answer;
@@ -14,6 +21,7 @@ class Response{
 public class Guesser{
   ArrayList<Question> questions;
   HashSet<String> guesses;
+  static Random rndm = new Random();
 
   public static String getInput(Scanner in, String[] inputs){
     while (true){
@@ -86,6 +94,17 @@ public class Guesser{
       i++;
     }
   }
+
+  //sorts array by how many guesses have determined answers, the questions for with the fewest determined answers are at the beginning of the array
+  public ArrayList<Question> sortByLeastGuessed(ArrayList<Question> questionPool){
+    ArrayList<Question> leastGuessed = new ArrayList<Question>(questionPool);
+    Collections.sort(leastGuessed, new UnguessedComparator());
+    for (Question question: leastGuessed){
+      System.out.println (question.numGuessesKnown() + " " +question.question);
+    }
+    return leastGuessed;
+  }
+  
   public void getNewQuestion(Scanner in, HashSet<String> myGuesses){
     System.out.println ("Do you want to enter a question that distinguishes between "+ myGuesses+ " (y/n)");
     String answer = getInput(in);
@@ -100,8 +119,7 @@ public class Guesser{
       String[] guessArray = guesses.toArray(new String[guesses.size()]);
       HashSet<String> asks = new HashSet<String>(myGuesses);
       while (asks.size()< 9){
-        // generate a random number
-        Random rndm = new Random();
+
         // this will generate a random number between 0 and
         // HashSet.size - 1
         int rndmNumber = rndm.nextInt(guesses.size());
@@ -154,7 +172,7 @@ public class Guesser{
 
       if (myGuesses.size() == 1){
         String myGuess = myGuesses.iterator().next();
-        System.out.println("Is your animal a " + myGuess + " ? (y/n)");
+        System.out.println("I guess your animal is " + myGuess + ". Am I right? (y/n)");
         String correct = getInput(in);
         if (correct.equals("y")){
           System.out.println ("YAHOO!! I'm the best!!");
@@ -172,7 +190,7 @@ public class Guesser{
 
 
   public void randomGuess(Scanner in ){
-    Random rndm = new Random();
+
     HashSet<String> myGuesses = new HashSet<String>(guesses);
     ArrayList<Question> questionPool = new ArrayList<Question>(questions);
     //nSystem.out.println ("questionPool:" +questionPool);
@@ -243,8 +261,11 @@ public class Guesser{
         chosen = i;
       }
     }
+    System.out.println ("bestelim is:" + bestElim);
     return (chosen);
   }
+
+
 
   public void smartGuess(Scanner in){
     HashSet<String> myGuesses = new HashSet<String>(guesses);
@@ -271,6 +292,22 @@ public class Guesser{
         break;
       }
     
+    }
+
+    //Ask a few more neglected questions
+    for (int i =0; i<3; i++){
+      questionPool = sortByLeastGuessed(questionPool);
+      int rndmNumber = rndm.nextInt(Math.min(questionPool.size(),5));
+      Question question = questionPool.get(i);
+      questionPool.remove(i);
+      //ask the question
+      Response response = askQuestion (in, question, myGuesses);
+      //System.out.println ("My guesses are: " + myGuesses);
+      if (response.answer.equals("quit")){
+        return;
+      }
+      responses.add(response);
+
     }
     boolean correct = makeGuess(in, myGuesses);
     String guess;
