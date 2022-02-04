@@ -7,9 +7,6 @@ class Main {
   public static void main(String[] args) throws FileNotFoundException{
     System.out.println("Hello world!");
 
-    
-
-
     File file = new File("animalQuestions.txt");
     Guesser animalGuesser;
 
@@ -23,7 +20,7 @@ class Main {
     } else { 
       Scanner scan = new Scanner(file);
       String json = scan.nextLine();
-      System.out.println (json);
+      //System.out.println (json);
       Gson gson = new Gson();
       animalGuesser = gson.fromJson(json, Guesser.class);  
     }
@@ -31,7 +28,7 @@ class Main {
     //Guess
     Scanner in = new Scanner(System.in);
     while (true){
-      animalGuesser.serialGuess(in);
+      animalGuesser.randomGuess(in);
       System.out.println ("Do you want to play again (y/n)");
       String input = Guesser.getInput(in);
       if (!(input.equals("yes") || input.equals("y"))){
@@ -44,6 +41,7 @@ class Main {
     //Print out updated guesser to file 
     Gson ason = new Gson();
     String json = ason.toJson(animalGuesser); 
+    //System.out.println (json);
 
     try {
       FileWriter myWriter = new FileWriter("animalQuestions.txt");
