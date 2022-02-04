@@ -32,6 +32,8 @@ public class Guesser{
     }
   }
 
+
+
   public static String getInput(Scanner in){
     String[] validInputs = {"y","yes","n","no","quit"};
     String input = getInput (in, validInputs);
@@ -62,7 +64,28 @@ public class Guesser{
     this.guesses = guesses;
   }
 
+  public void pruneQuestions(Scanner in){
+    int pageSize = 25;
+    int i = 0;
 
+    while (i< questions.size()){
+      System.out.println (i+". "+ questions.get(i).question);
+      if ((i%pageSize == pageSize -1)|| (i == questions.size()-1)){
+        System.out.println ("Enter integer to delete or return");
+        String input = in.nextLine();
+        if (!input.equals("")){
+          int index = Integer.parseInt(input);
+          System.out.println ("Delete:" + questions.get(index).question + "? (y/n/quit)");
+          input = getInput(in);
+          if (input.equals("y")){
+            questions.remove(index);
+            i--;
+          }
+        }
+      }
+      i++;
+    }
+  }
   public void getNewQuestion(Scanner in, HashSet<String> myGuesses){
     System.out.println ("Do you want to enter a question that distinguishes between "+ myGuesses+ " (y/n)");
     String answer = getInput(in);
@@ -201,6 +224,74 @@ public class Guesser{
     }
 
   }
+
+
+  //picks the Question out of the question pool that will eliminate the most guesses if the worse answer is chosen and returns the index of the question -- if no question in the question pool will eliminate any answers returns -1
+  public int chooseSmartQuestion(HashSet<String> myGuesses, ArrayList<Question> questionPool){
+    int chosen=-1;
+    int bestElim =0;
+    //chooses the question for which you get the most guesses eliminated for the weaker of 
+    //the yes/no answers
+    for (int i = 0; i< questionPool.size(); i++){
+      HashSet<String> noElims = new HashSet<String>(myGuesses);
+      noElims.retainAll(questionPool.get(i).noGuesses);
+      HashSet<String> yesElims = new HashSet<String>(myGuesses);
+      yesElims.retainAll(questionPool.get(i).yesGuesses);
+      int minElim = Math.min(noElims.size(), yesElims.size());
+      if (minElim > bestElim){
+        bestElim = minElim;
+        chosen = i;
+      }
+    }
+    return (chosen);
+  }
+
+  public void smartGuess(Scanner in){
+    HashSet<String> myGuesses = new HashSet<String>(guesses);
+    ArrayList<Question> questionPool = new ArrayList<Question>(questions);
+    //nSystem.out.println ("questionPool:" +questionPool);
+    boolean guessed = false;
+    ArrayList<Response> responses = new ArrayList<Response>();
+    while (!questionPool.isEmpty()){
+      System.out.println ("myGuesses:" + myGuesses);
+      int i = chooseSmartQuestion(myGuesses, questionPool);
+      if (i == -1){// there were no questions that eliminated poss
+        break;
+      }
+      Question question = questionPool.get(i);
+      questionPool.remove(i);
+      //ask the question
+      Response response = askQuestion (in, question, myGuesses);
+      //System.out.println ("My guesses are: " + myGuesses);
+      if (response.answer.equals("quit")){
+        return;
+      }
+      responses.add(response);
+      if (myGuesses.size()<2) {
+        break;
+      }
+    
+    }
+    boolean correct = makeGuess(in, myGuesses);
+    String guess;
+    if (!correct){
+      //else didn't guess correctly or had multiple guesses
+      System.out.println ("What were you thinking of?");
+      guess = in.nextLine();
+      guess = guess.toLowerCase();
+      guesses.add(guess);
+      myGuesses.add(guess);
+      getNewQuestion(in, myGuesses);
+    } else {
+      guess = myGuesses.iterator().next();
+    }
+    for (Response response: responses){
+      response.question.add(guess, response.answer);
+    }
+
+
+  }
+
   public void serialGuess(Scanner in){
 
     HashSet<String> myGuesses = new HashSet<String>(guesses);

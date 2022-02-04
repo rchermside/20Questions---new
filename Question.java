@@ -5,9 +5,6 @@ import java.io.*;
 class Question{
 
   String question;
-  int yeses;  // the number of guesses for which a s high percentage of yes
-  int nos;    // the number of guesses for which you have a strong no
-  int maybes;  // the number of guesses that are unsure
   public final static float GOOD_PERCENT = 80;  // if more than GOOD_PERCENT percent of the responses are a yes or no it goes in the yes or no set else it goes in the maybeGuesses
 
   public HashSet<String> yesGuesses;
@@ -20,9 +17,6 @@ class Question{
 
   Question (String question){
     this.question = question;
-    yeses = 0;
-    nos =0;
-    maybes =0;
 
     yesGuesses = new HashSet<String>();
     noGuesses = new HashSet<String>();
@@ -39,9 +33,6 @@ class Question{
     this.yesGuesses.addAll(yesGuesses);
     this.noGuesses.addAll(noGuesses);
     this.maybeGuesses.addAll(maybeGuesses);
-    yeses = yesGuesses.size();
-    nos = noGuesses.size();
-    maybes = maybeGuesses.size();
     addToCount(yesGuesses,numYeses);
     addToCount(noGuesses,numNos);
     addToCount(yesGuesses,numResponses);

@@ -25,19 +25,33 @@ class Main {
       animalGuesser = gson.fromJson(json, Guesser.class);  
     }
 
-    //Guess
-    Scanner in = new Scanner(System.in);
+    // //Guess
+     Scanner in = new Scanner(System.in);
     while (true){
-      animalGuesser.randomGuess(in);
+
+      animalGuesser.smartGuess(in);
       System.out.println ("Do you want to play again (y/n)");
       String input = Guesser.getInput(in);
       if (!(input.equals("yes") || input.equals("y"))){
         break;
       }
-
-
     }
+    // test out  chooseSmartQuestion
+    // int i = animalGuesser.chooseSmartQuestion(animalGuesser.guesses, animalGuesser.questions);
+    // System.out.println ("Smart guesser Chose:");
+    // System.out.println (animalGuesser.questions.get(i));
+    // HashSet<String> guesses = new HashSet<String>(animalGuesser.guesses);
+    // guesses.removeAll(animalGuesser.questions.get(i).yesGuesses);
+    // i = animalGuesser.chooseSmartQuestion(guesses, animalGuesser.questions);
+    // System.out.println ("Smart guesser Chose:");
+    // System.out.println (animalGuesser.questions.get(i));
     
+
+    //Prune animalQuestions
+
+    //animalGuesser.pruneQuestions(in);
+ 
+
     //Print out updated guesser to file 
     Gson ason = new Gson();
     String json = ason.toJson(animalGuesser); 
