@@ -245,11 +245,20 @@ public class Guesser{
 
 
   //picks the Question out of the question pool that will eliminate the most guesses if the worse answer is chosen and returns the index of the question -- if no question in the question pool will eliminate any answers returns -1
-  public int chooseSmartQuestion(HashSet<String> myGuesses, ArrayList<Question> questionPool){
+  public int chooseSmartQuestion(HashSet<String> myGuesses, ArrayList<Question> questionPool, int random){
+    if (random > 0){
+      int rndNumber = rndm.nextInt(100);
+      if (rndNumber < random){
+        int chosen = rndm.nextInt(questionPool.size());
+        return chosen;
+      }
+    }
+    
     int chosen=-1;
     int bestElim =0;
     //chooses the question for which you get the most guesses eliminated for the weaker of 
     //the yes/no answers
+    
     for (int i = 0; i< questionPool.size(); i++){
       HashSet<String> noElims = new HashSet<String>(myGuesses);
       noElims.retainAll(questionPool.get(i).noGuesses);
@@ -275,7 +284,7 @@ public class Guesser{
     ArrayList<Response> responses = new ArrayList<Response>();
     while (!questionPool.isEmpty()){
       System.out.println ("myGuesses:" + myGuesses);
-      int i = chooseSmartQuestion(myGuesses, questionPool);
+      int i = chooseSmartQuestion(myGuesses, questionPool, 20);
       if (i == -1){// there were no questions that eliminated poss
         break;
       }
@@ -371,5 +380,11 @@ public class Guesser{
     for (Response response: responses){
       response.question.add(guess, response.answer);
     }
+  }
+
+
+  //just a utility function to answer questions with incomplete answers
+  public void questionUtil(){
+
   }
 }
