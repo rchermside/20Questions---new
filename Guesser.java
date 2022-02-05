@@ -390,12 +390,26 @@ public class Guesser{
     for (int i =0; i< sorted.size(); i++){
       System.out.println (i + ". " + sorted.get(i).question + "(" + sorted.get(i).numGuessesKnown());
     }
-    System.out.println ("Enter number of question to fill in answers or 'quit'");
-    String input = in.nextLine();
-    if (input.equals("quit")){
-      return;
+
+    boolean valid  = false;
+
+    int i =0;
+    while (!valid){
+      System.out.println ("Enter number of question to fill in answers or 'quit'");
+      String input = in.nextLine();
+      if (input.equals("quit") || input.equals("q")){
+        return;
+      }
+
+      try {
+        i = Integer.parseInt(input);
+        if (i >= 0 && i < sorted.size()){
+          valid = true;
+        }
+      } catch (NumberFormatException nfe) {
+          valid = false;
+      }
     }
-    int i = Integer.parseInt(input);
     Question question = sorted.get(i);
     HashSet<String> unGuessed = new HashSet<String>(guesses);
     unGuessed.removeAll(question.yesGuesses);
