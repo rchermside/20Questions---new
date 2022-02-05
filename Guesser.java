@@ -275,8 +275,8 @@ public class Guesser{
   }
 
 
-
-  public void smartGuess(Scanner in){
+  //random - percentage of times to stick a random question in 
+  public void smartGuess(Scanner in, int randomPercent){
     HashSet<String> myGuesses = new HashSet<String>(guesses);
     ArrayList<Question> questionPool = new ArrayList<Question>(questions);
     //nSystem.out.println ("questionPool:" +questionPool);
@@ -284,7 +284,7 @@ public class Guesser{
     ArrayList<Response> responses = new ArrayList<Response>();
     while (!questionPool.isEmpty()){
       System.out.println ("myGuesses:" + myGuesses);
-      int i = chooseSmartQuestion(myGuesses, questionPool, 20);
+      int i = chooseSmartQuestion(myGuesses, questionPool, randomPercent);
       if (i == -1){// there were no questions that eliminated poss
         break;
       }
@@ -384,7 +384,35 @@ public class Guesser{
 
 
   //just a utility function to answer questions with incomplete answers
-  public void questionUtil(){
+  public void questionUtil(Scanner in){
+    questions = sortByLeastGuessed(questions);
+    ArrayList<Question> sorted = new ArrayList<Question>(questions);
+    for (int i =0; i< sorted.size(); i++){
+      System.out.println (i + ". " + sorted.get(i).question + "(" + sorted.get(i).numGuessesKnown());
+    }
+    System.out.println ("Enter number of question to fill in answers or 'quit'");
+    String input = in.nextLine();
+    if (input.equals("quit")){
+      return;
+    }
+    int i = Integer.parseInt(input);
+    Question question = sorted.get(i);
+    HashSet<String> unGuessed = new HashSet<String>(guesses);
+    unGuessed.removeAll(question.yesGuesses);
+    unGuessed.removeAll(question.noGuesses);
+    unGuessed.removeAll(question.maybeGuesses);
 
+    
+    System.out.println ("Please answer your question for the following characters");
+    System.out.println (question.question);
+    for (String guess: unGuessed){
+      System.out.print (guess + " (y/n/maybe/quit):");
+
+      String answer = getQInput(in);
+      if (answer.equals("quit")){
+        return;
+      }
+      question.add(guess, answer);
+    }
   }
 }

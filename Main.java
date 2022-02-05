@@ -25,20 +25,21 @@ class Main {
       animalGuesser = gson.fromJson(json, Guesser.class);  
     }
 
-
-    
-    //Guess
     Scanner in = new Scanner(System.in);
+    
+    // //Guess
     animalGuesser.sortByLeastGuessed(animalGuesser.questions);
     while (true){
       System.out.println ("Think of an animal and I will guess it");
-      System.out.println ("Do you want to a smart guesser('s) or random guesser'r'?");
-      String[] validInputs = {"r","s"};
+      System.out.println ("Do you want to have a smart guesser('s) or have a random guesser('r') or teach('t') the program?");
+      String[] validInputs = {"r","s", "t"};
       String input = Guesser.getInput (in, validInputs);
       if (input.equals("s")){
-        animalGuesser.smartGuess(in);
-      } else {
+        animalGuesser.smartGuess(in,0);
+      } else if (input.equals("r")){
         animalGuesser.randomGuess(in);
+      } else {
+        animalGuesser.questionUtil(in);
       }
       System.out.println ("Do you want to play again (y/n)");
       input = Guesser.getInput(in);
@@ -49,6 +50,9 @@ class Main {
     //Prune animalQuestions
 
     //animalGuesser.pruneQuestions(in);
+
+    //Answer questions
+    //animalGuesser.questionUtil(in);
  
 
     //Print out updated guesser to file 
