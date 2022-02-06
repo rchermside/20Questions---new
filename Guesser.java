@@ -19,6 +19,7 @@ class Response{
 }
 
 public class Guesser{
+  String startingInstruction;
   ArrayList<Question> questions;
   HashSet<String> guesses;
   static Random rndm = new Random();
@@ -38,6 +39,13 @@ public class Guesser{
         System.out.print(", "+ inputs[i] );
       }
     }
+  }
+
+  Guesser (String question, HashSet<String> guesses, String startingInstruction){
+    questions = new ArrayList<Question>();
+    questions.add(new Question(question));
+    this.guesses = guesses;
+    this.startingInstruction = startingInstruction;
   }
 
 
@@ -64,12 +72,6 @@ public class Guesser{
       input = "m";
     }
     return input;
-  }
-
-  Guesser (String question, HashSet<String> guesses){
-    questions = new ArrayList<Question>();
-    questions.add(new Question(question));
-    this.guesses = guesses;
   }
 
   public void pruneQuestions(Scanner in){
@@ -172,7 +174,7 @@ public class Guesser{
 
       if (myGuesses.size() == 1){
         String myGuess = myGuesses.iterator().next();
-        System.out.println("I guess your animal is " + myGuess + ". Am I right? (y/n)");
+        System.out.println("I guess a  " + myGuess + ". Am I right? (y/n)");
         String correct = getInput(in);
         if (correct.equals("y")){
           System.out.println ("YAHOO!! I'm the best!!");
@@ -182,7 +184,7 @@ public class Guesser{
       }
 
       //else there are multiple guesses in myGuesses
-      System.out.println ("I guess your animal is in " + myGuesses);
+      System.out.println ("I guess its one of" + myGuesses);
       System.out.println ("Am I right? (y/n)");
       String correct = getInput(in);
       return false;

@@ -5,26 +5,28 @@ import com.google.gson.Gson;
 
 class Main {
   public static void main(String[] args) throws FileNotFoundException{
-    System.out.println("Hello world!");
+      // System.out.println("Hello world!");
 
-    File file = new File("animalQuestions.txt");
-    Guesser animalGuesser;
+      // File file = new File("animalQuestions.txt");
+      // Guesser animalGuesser;
 
-    //if file doesn't exist create a brand new tree
-    if (!file.exists()){
-      //create a guesser
-      HashSet<String> animals = new HashSet<>(Arrays.asList("cat", "bat", "crocodile","coyote","dog"));
-      Scanner in = new Scanner(System.in);
-      animalGuesser = new Guesser("Are you thinking of an animal?", animals);      
-    // read in tree from a file 
-    } else { 
-      Scanner scan = new Scanner(file);
-      String json = scan.nextLine();
-      //System.out.println (json);
-      Gson gson = new Gson();
-      animalGuesser = gson.fromJson(json, Guesser.class);  
-    }
+      // //if file doesn't exist create a brand new tree
+      // if (!file.exists()){
+      //   //create a guesser
+      //   HashSet<String> animals = new HashSet<>(Arrays.asList("cat", "bat", "crocodile","coyote","dog"));
+      //   Scanner in = new Scanner(System.in);
+      //   animalGuesser = new Guesser("Are you thinking of an animal?", animals,"think of an animal");      
+      // // read in tree from a file 
+      // } else { 
+      //   Scanner scan = new Scanner(file);
+      //   String json = scan.nextLine();
+      //   //System.out.println (json);
+      //   Gson gson = new Gson();
+      //   animalGuesser = gson.fromJson(json, Guesser.class);  
+      // }
 
+    Launcher launcher = new Launcher();
+    Guesser animalGuesser = launcher.getGuesser("animal");
     Scanner in = new Scanner(System.in);
     
     // //Guess
