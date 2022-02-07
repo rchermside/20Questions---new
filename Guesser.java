@@ -1,22 +1,6 @@
 import java.util.*;
 import java.io.*;
 
-class UnguessedComparator implements Comparator<Question> {
-    @Override
-    public int compare(Question a, Question b) {
-        return a.numGuessesKnown() < b.numGuessesKnown() ? -1 : a.numGuessesKnown() == b.numGuessesKnown() ? 0 : 1;
-    }
-}
-
-class Response{
-  Question question;
-  String answer;
-
-  Response(Question q, String answer){
-    this.question = q;
-    this.answer = answer;
-  }
-}
 
 public class Guesser{
   String startingInstruction;
