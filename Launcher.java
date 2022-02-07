@@ -1,9 +1,13 @@
 import java.util.*;
 import java.io.*;
 import com.google.gson.Gson;
+import java.time.format.DateTimeFormatter;  
+import java.time.LocalDateTime;    
+
 
 class Launcher {
   static  final Scanner in = new Scanner(System.in);
+  static final String[] guesserTypes = {"dnd", "animal"};
   private HashMap <String, Guesser> guessers;
   
 
@@ -12,7 +16,45 @@ Launcher(){
 }
 
   
-  public void play(String type){
+  public void play(){
+
+    System.out.println ("What kind of guesser do you want to guess?");
+    int i = 1;
+    for (String guesserType: guesserTypes){
+      System.out.println (i + "." + guesserType);
+      i++;
+    }
+    System.out.println ("Enter choice:");
+    int choice = in.nextInt();
+    in.nextLine();
+    
+    // check for valid input here
+
+
+    String guesserType = guesserTypes[choice-1];
+    Guesser guesser = getGuesser(guesserType);
+
+    while (true){
+
+      System.out.println (guesser.startingInstruction);
+      System.out.println ("Do you want to have a smart guesser('s) or have a random guesser('r') or teach('t') the program?");
+      String[] validInputs = {"r","s", "t"};
+      String input = Guesser.getInput (in, validInputs);
+      if (input.equals("s")){
+        guesser.smartGuess(in,0);
+      } else if (input.equals("r")){
+        guesser.randomGuess(in);
+      } else {
+        guesser.questionUtil(in);
+      }
+      System.out.println ("Do you want to play again (y/n)");
+      input = Guesser.getInput(in);
+      if (!(input.equals("yes") || input.equals("y"))){
+        break;
+      }
+    }
+
+    save(guesserType);
 
   }
 
@@ -48,11 +90,10 @@ Launcher(){
             guesses = new HashSet<String>();
             startingInstruction = "Think of a " + guesserType;
           }
-          guesser = new Guesser(null, guesses, startingInstruction);      
+          guesser = new Guesser("Are you thinking of a monster?", guesses, startingInstruction);      
 
       }
-
-
+    guessers.put(guesserType, guesser);
     }
     return guesser;
   }
@@ -65,5 +106,47 @@ Launcher(){
     Gson gson = new Gson();
     guesser = gson.fromJson(json, Guesser.class);  
     return guesser;
+  }
+
+  public void save(String guesserType){
+    
+    Guesser guesser = guessers.get(guesserType);
+    if (guesser == null){
+      System.out.println ("Guesser type " + guesserType + " has not been created.  Can not write to file.");
+      return;
+    }
+    
+    Gson ason = new Gson();
+    String json = ason.toJson(guesser); 
+    //System.out.println (json);
+
+    try {
+      //Print out updated guesser to file 
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");  
+      LocalDateTime now = LocalDateTime.now();  
+      System.out.println(dtf.format(now));  
+
+      File renameTo = new File (guesserType+ "Guesser" +dtf.format(now) + ".txt");
+
+      // File (or directory) with old name
+      File file = new File(guesserType+ "Guesser.txt");
+
+      if (renameTo.exists())
+        renameTo.delete();
+
+      // Rename file (or directory)
+      boolean success = file.renameTo(renameTo);
+
+      if (!success) {
+        System.out.println ("file was not renamed");
+      }
+      FileWriter myWriter = new FileWriter(guesserType+ "Guesser.txt");
+      myWriter.write(json);
+      myWriter.close();
+      System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
   }
 }

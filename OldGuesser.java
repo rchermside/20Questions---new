@@ -18,7 +18,7 @@ class Response{
   }
 }
 
-public class Guesser{
+public class OldGuesser{
   String startingInstruction;
   ArrayList<Question> questions;
   HashSet<String> guesses;

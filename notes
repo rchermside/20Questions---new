@@ -1,0 +1,17 @@
+sit gets confused if you eliminate it
+how do I deal with that?
+I could keep a count of number of matches, vs number of non matches
+
+if you get done to 0 guesses use the highest of matches-non-matches.
+
+or.. if you get to a list
+this would mean things that it doesn't know about would get guessed less
+    import java.time.format.DateTimeFormatter;  
+    import java.time.LocalDateTime;    
+    public class CurrentDateTimeExample1 {    
+      public static void main(String[] args) {    
+       DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+       LocalDateTime now = LocalDateTime.now();  
+       System.out.println(dtf.format(now));  
+      }    
+    }    
