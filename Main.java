@@ -1,62 +1,45 @@
 import java.util.*;
 import java.io.*;
 import com.google.gson.Gson;
+import newclasses.NewGuesser;
 
 
 class Main {
   public static void main(String[] args) throws FileNotFoundException{
-    System.out.println("Hello world!");
+    System.out.println("Click on screen to get focus before playing");
 
 
-    Launcher launcher = new Launcher();
+
+    // String guesserType="dnd";
+    // Guesser guesser = launcher.getGuesser(guesserType);
+    // guesser.inflateCurrentEntries(50);
+    // launcher.save(guesserType);
+    
+
 
     //Scanner in = new Scanner(System.in);
+    String guesserType = "animal";
+    Launcher launcher = new Launcher();
+    Guesser oldGuesser = launcher.getGuesser(guesserType);
+    Converter conv = new Converter();
+    NewGuesser newGuesser = conv.convertGuesser(oldGuesser);
+
+
+    Gson ason = new Gson();
+    String json = ason.toJson(newGuesser); 
+    //System.out.println (json);
+
+    try {
+      FileWriter myWriter = new FileWriter("data/" + "new" + guesserType + "Guesser.txt");
+      myWriter.write(json);
+      myWriter.close();
+      System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }
+
+    // launcher.play();
     
-    launcher.play();
-    // //Guess
-
-    // while (true){
-    //   System.out.println ("Think of something in the D&D universe and I will guess it");
-    //   System.out.println ("Do you want to have a smart guesser('s) or have a random guesser('r') or teach('t') the program?");
-    //   String[] validInputs = {"r","s", "t"};
-    //   String input = Guesser.getInput (in, validInputs);
-    //   if (input.equals("s")){
-    //     animalGuesser.smartGuess(in,0);
-    //   } else if (input.equals("r")){
-    //     animalGuesser.randomGuess(in);
-    //   } else {
-    //     animalGuesser.questionUtil(in);
-    //   }
-    //   System.out.println ("Do you want to play again (y/n)");
-    //   input = Guesser.getInput(in);
-    //   if (!(input.equals("yes") || input.equals("y"))){
-    //     break;
-    //   }
-    // }
-
-    // //Print out updated guesser to file 
-    // launcher.save(guesserType);
-    //Prune animalQuestions
-
-    //animalGuesser.pruneQuestions(in);
-
-    //Answer questions
-    //animalGuesser.questionUtil(in);
- 
-
-  //   //Print out updated guesser to file 
-  //   Gson ason = new Gson();
-  //   String json = ason.toJson(animalGuesser); 
-  //   //System.out.println (json);
-
-  //   try {
-  //     FileWriter myWriter = new FileWriter("dndGuesser.txt");
-  //     myWriter.write(json);
-  //     myWriter.close();
-  //     System.out.println("Successfully wrote to the file.");
-  //   } catch (IOException e) {
-  //     System.out.println("An error occurred.");
-  //     e.printStackTrace();
-  //   } 
   }
 }

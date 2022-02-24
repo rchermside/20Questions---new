@@ -1,12 +1,14 @@
+package newclasses;
+
 import java.util.*;
-import java.io.*;
 
 
-public class Guesser{
-  String startingInstruction;
-  ArrayList<Question> questions;
-  HashSet<String> guesses;
+public class NewGuesser{
+  public String startingInstruction;
+  public ArrayList<NewQuestion> questions;
+  public ArrayList<Guess> guessArray;
   static Random rndm = new Random();
+
 
   public static String getInput(Scanner in, String[] inputs){
     while (true){
@@ -25,14 +27,18 @@ public class Guesser{
     }
   }
 
-  Guesser (String question, HashSet<String> guesses, String startingInstruction){
-    questions = new ArrayList<Question>();
-    questions.add(new Question(question));
-    this.guesses = guesses;
+  public NewGuesser (String question, ArrayList<Guess> guessArray, String startingInstruction){
+    questions = new ArrayList<NewQuestion>();
+    questions.add(new NewQuestion(question));
+    this.guessArray = guessArray;
     this.startingInstruction = startingInstruction;
   }
 
-
+public NewGuesser(String startingInstruction,ArrayList<NewQuestion> questions, ArrayList<Guess> guessArray ){
+  this.startingInstruction = startingInstruction;
+  this.questions = questions;
+  this.guessArray = guessArray;
+}
 
   public static String getInput(Scanner in){
     String[] validInputs = {"y","yes","n","no","quit"};
@@ -82,36 +88,36 @@ public class Guesser{
   }
 
   //sorts array by how many guesses have determined answers, the questions for with the fewest determined answers are at the beginning of the array
-  public ArrayList<Question> sortByLeastGuessed(ArrayList<Question> questionPool){
-    ArrayList<Question> leastGuessed = new ArrayList<Question>(questionPool);
-    Collections.sort(leastGuessed, new UnguessedComparator());
+  public ArrayList<NewQuestion> sortByLeastGuessed(ArrayList<NewQuestion> questionPool){
+    ArrayList<NewQuestion> leastGuessed = new ArrayList<NewQuestion>(questionPool);
+    Collections.sort(leastGuessed, new NewUnguessedComparator());
     return leastGuessed;
   }
   
-  public void getNewQuestion(Scanner in, HashSet<String> myGuesses){
+  public void getNewQuestion(Scanner in, HashSet<Short> myGuesses){
   
     System.out.println ("Do you want to enter a question that distinguishes between "+ myGuesses+ " (y/n)");
     String answer = getInput(in);
     if (answer.equals("y")){
       System.out.println ("Please enter the question");
       String newQuestion = in.nextLine();
-      HashSet<String> noGuesses = new HashSet<String>();
-      HashSet<String> yesGuesses = new HashSet<String>();
-      HashSet<String> maybeGuesses = new HashSet<String>();
+      HashSet<Short> noGuesses = new HashSet<Short>();
+      HashSet<Short> yesGuesses = new HashSet<Short>();
+      HashSet<Short> maybeGuesses = new HashSet<Short>();
 
       
-      HashSet<String> asks = new HashSet<String>(myGuesses);
+      HashSet<Short> asks = new HashSet<Short>(myGuesses);
       final int NUM_ASKS = 9;
       int needed = NUM_ASKS - asks.size();
-      int pool = guesses.size();
-      for (String guess: guesses){
+      int pool = guessArray.size();
+      for (Guess guess: guessArray){
         if (pool <= needed){
-          asks.add(guess);
+          asks.add(guess.guessId);
           needed--;
         } else {
           int rndNumber = rndm.nextInt(pool);
           if (rndNumber < needed){
-            asks.add(guess);
+            asks.add(guess.guessId);
             needed--;
           }
           if (needed == 0){
@@ -123,8 +129,8 @@ public class Guesser{
       
       System.out.println ("Please answer your question for the following characters");
 
-      for (String guess: asks){
-        System.out.print (guess + " (y/n/maybe/quit):");
+      for (Short guess: asks){
+        System.out.print (guessArray.get(guess) + " (y/n/maybe/quit):");
 
         answer = getQInput(in);
         if (answer.equals("quit")){
@@ -138,14 +144,14 @@ public class Guesser{
           maybeGuesses.add(guess);
         }
       }
-      Question q = new Question(newQuestion, yesGuesses, noGuesses, maybeGuesses);
+      NewQuestion q = new NewQuestion(newQuestion, yesGuesses, noGuesses, maybeGuesses);
       questions.add(q);
       System.out.println ("Thank you for making me a better game!");
     }
   }
 
   //asks the passed in question to the user and returns a response
-  public Response askQuestion (Scanner in, Question question, HashSet<String> myGuesses){
+  public NewResponse askQuestion (Scanner in, NewQuestion question, HashSet<Short> myGuesses){
       System.out.println (question.question +" (y/n/maybe/quit)");
       String input = getQInput(in);
       if (input.equals("n")){
@@ -153,22 +159,22 @@ public class Guesser{
       } else if (input.equals("y")){
         myGuesses.removeAll(question.noGuesses);
       }
-      Response response = new Response (question, input);
+      NewResponse response = new NewResponse (question, input);
       return response;
 
   }
 
 
   //makes a guess to the user and returns whether the guess was correct(true)
-  public boolean makeGuess(Scanner in, HashSet<String> myGuesses){
+  public boolean makeGuess(Scanner in, HashSet<Short> myGuesses){
       if (myGuesses.size() == 0){
         System.out.println ("I have no idea!!!");
         return false;
       }
 
       if (myGuesses.size() == 1){
-        String myGuess = myGuesses.iterator().next();
-        System.out.println("I guess a  " + myGuess + ". Am I right? (y/n)");
+        Short myGuess = myGuesses.iterator().next();
+        System.out.println("I guess a  " + guessArray.get(myGuess).name + ". Am I right? (y/n)");
         String correct = getInput(in);
         if (correct.equals("y")){
           System.out.println ("YAHOO!! I'm the best!!");
@@ -178,20 +184,33 @@ public class Guesser{
       }
 
       //else there are multiple guesses in myGuesses
-      System.out.println ("I guess its one of" + myGuesses);
+
+      System.out.println ("I guess its one of " + guessesToString(myGuesses));
       System.out.println ("Am I right? (y/n)");
       String correct = getInput(in);
       return false;
   }
 
+  public String guessesToString(HashSet<Short> guessSet){
+    String guessesString = "";
+    for (Short guess: guessSet){
+      guessesString = guessesString + ", " + guessArray.get(guess);
+    }
+    guessesString = guessesString.substring(1);
+    return guessesString;
+  }
+
 
   public void randomGuess(Scanner in ){
 
-    HashSet<String> myGuesses = new HashSet<String>(guesses);
-    ArrayList<Question> questionPool = new ArrayList<Question>(questions);
+    HashSet<Short> myGuesses = new HashSet<Short>();
+    for (Guess guess: guessArray){
+      myGuesses.add(guess.guessId);
+    }
+    ArrayList<NewQuestion> questionPool = new ArrayList<NewQuestion>(questions);
     //nSystem.out.println ("questionPool:" +questionPool);
     boolean guessed = false;
-    ArrayList<Response> responses = new ArrayList<Response>();
+    ArrayList<NewResponse> responseHistory = new ArrayList<NewResponse>();
     while (!questionPool.isEmpty()){
       //randomly choose a question out of the question pool
       //check to see if this question will narrow the guesses
@@ -199,49 +218,51 @@ public class Guesser{
       // this will generate a random number between 0 and
       // HashSet.size - 1
       int rndmNumber = rndm.nextInt(questionPool.size());
-      Question question = questionPool.get(rndmNumber);
+      NewQuestion question = questionPool.get(rndmNumber);
       questionPool.remove(rndmNumber);
 
-      HashSet<String> all = new HashSet<String>(question.yesGuesses);
+      HashSet<Short> all = new HashSet<Short>(question.yesGuesses);
       all.addAll(question.noGuesses);
-      HashSet<String> clone =new HashSet<String>(myGuesses);
+      HashSet<Short> clone =new HashSet<Short>(myGuesses);
       clone.retainAll(all);
 
       if (!(question.yesGuesses.containsAll(clone) || question.noGuesses.containsAll(clone))){
         //ask the question
-        Response response = askQuestion (in, question, myGuesses);
+        NewResponse response = askQuestion (in, question, myGuesses);
         //System.out.println ("My guesses are: " + myGuesses);
         if (response.answer.equals("quit")){
           return;
         }
-        responses.add(response);
+        responseHistory.add(response);
         if (myGuesses.size()<2) {
           break;
         }
       }
     }
     boolean correct = makeGuess(in, myGuesses);
-    String guess;
+    Short guessId;
     if (!correct){
       //else didn't guess correctly or had multiple guesses
       System.out.println ("What were you thinking of?");
-      guess = in.nextLine();
-      guess = guess.toLowerCase();
-      guesses.add(guess);
-      myGuesses.add(guess);
+      String guessName = in.nextLine();
+      guessName = guessName.toLowerCase();
+      Guess guess = new Guess((short)guessArray.size(), guessName);
+      guessArray.add(guess);
+      myGuesses.add(guess.guessId);
       getNewQuestion(in, myGuesses);
+      guessId = guess.guessId;
     } else {
-      guess = myGuesses.iterator().next();
+      guessId = myGuesses.iterator().next();
     }
-    for (Response response: responses){
-      response.question.add(guess, response.answer);
+    for (NewResponse response: responseHistory){
+      response.question.add(guessId, response.answer);
     }
 
   }
 
 
   //picks the Question out of the question pool that will eliminate the most guesses if the worse answer is chosen and returns the index of the question -- if no question in the question pool will eliminate any answers returns -1
-  public int chooseSmartQuestion(HashSet<String> myGuesses, ArrayList<Question> questionPool, int random){
+  public int chooseSmartQuestion(HashSet<Short> myGuesses, ArrayList<NewQuestion> questionPool, int random){
     if (random > 0){
       int rndNumber = rndm.nextInt(100);
       if (rndNumber < random){
@@ -256,9 +277,9 @@ public class Guesser{
     //the yes/no answers
     
     for (int i = 0; i< questionPool.size(); i++){
-      HashSet<String> noElims = new HashSet<String>(myGuesses);
+      HashSet<Short> noElims = new HashSet<Short>(myGuesses);
       noElims.retainAll(questionPool.get(i).noGuesses);
-      HashSet<String> yesElims = new HashSet<String>(myGuesses);
+      HashSet<Short> yesElims = new HashSet<Short>(myGuesses);
       yesElims.retainAll(questionPool.get(i).yesGuesses);
       int minElim = Math.min(noElims.size(), yesElims.size());
       if (minElim > bestElim){
@@ -266,33 +287,34 @@ public class Guesser{
         chosen = i;
       }
     }
-    System.out.println ("bestelim is:" + bestElim);
     return (chosen);
   }
 
 
   //random - percentage of times to stick a random question in 
   public void smartGuess(Scanner in, int randomPercent){
-    HashSet<String> myGuesses = new HashSet<String>(guesses);
-    ArrayList<Question> questionPool = new ArrayList<Question>(questions);
+    HashSet<Short> myGuesses = new HashSet<Short>();
+    for (Guess guess:guessArray){
+      myGuesses.add(guess.guessId);
+    }
+    ArrayList<NewQuestion> questionPool = new ArrayList<NewQuestion>(questions);
     //nSystem.out.println ("questionPool:" +questionPool);
     boolean guessed = false;
-    ArrayList<Response> responses = new ArrayList<Response>();
+    ArrayList<NewResponse> responseHistory = new ArrayList<NewResponse>();
     while (!questionPool.isEmpty()){
-      //System.out.println ("myGuesses:" + myGuesses);
       int i = chooseSmartQuestion(myGuesses, questionPool, randomPercent);
       if (i == -1){// there were no questions that eliminated poss
         break;
       }
-      Question question = questionPool.get(i);
+      NewQuestion question = questionPool.get(i);
       questionPool.remove(i);
       //ask the question
-      Response response = askQuestion (in, question, myGuesses);
+      NewResponse response = askQuestion (in, question, myGuesses);
       //System.out.println ("My guesses are: " + myGuesses);
       if (response.answer.equals("quit")){
         return;
       }
-      responses.add(response);
+      responseHistory.add(response);
       if (myGuesses.size()<2) {
         break;
       }
@@ -306,86 +328,88 @@ public class Guesser{
       }
       questionPool = sortByLeastGuessed(questionPool);
       int rndmNumber = rndm.nextInt(Math.min(questionPool.size(),5));
-      Question question = questionPool.get(rndmNumber);
+      NewQuestion question = questionPool.get(rndmNumber);
       questionPool.remove(rndmNumber);
       //ask the question
-      Response response = askQuestion (in, question, myGuesses);
+      NewResponse response = askQuestion (in, question, myGuesses);
       //System.out.println ("My guesses are: " + myGuesses);
       if (response.answer.equals("quit")){
         return;
       }
-      responses.add(response);
+      responseHistory.add(response);
 
     }
     boolean correct = makeGuess(in, myGuesses);
-    String guess;
+    Short guessId;
     if (!correct){
       //else didn't guess correctly or had multiple guesses
       System.out.println ("What were you thinking of?");
-      guess = in.nextLine();
-      guess = guess.toLowerCase();
-      guesses.add(guess);
-      myGuesses.add(guess);
+      String guessName = in.nextLine();
+      guessName = guessName.toLowerCase();
+      guessId = (short)guessArray.size();
+      Guess guess = new Guess(guessId,guessName);
+      guessArray.add(guess);
+      myGuesses.add(guessId);
       getNewQuestion(in, myGuesses);
     } else {
-      guess = myGuesses.iterator().next();
+      guessId = myGuesses.iterator().next();
     }
-    for (Response response: responses){
-      response.question.add(guess, response.answer);
+    for (NewResponse response: responseHistory){
+      response.question.add(guessId, response.answer);
     }
 
 
   }
 
-  public void serialGuess(Scanner in){
-
-    HashSet<String> myGuesses = new HashSet<String>(guesses);
-    boolean guessed = false;
-    ArrayList<Response> responses = new ArrayList<Response>();
-    for (Question question: questions){
-      //check to see if this question will narrow the guesses
-      
-      HashSet<String> all = new HashSet<String>(question.yesGuesses);
-      all.addAll(question.noGuesses);
-      HashSet<String> clone =new HashSet<String>(myGuesses);
-      clone.retainAll(all);
-
-      if (!(question.yesGuesses.containsAll(clone) || question.noGuesses.containsAll(clone))){
-        //ask the question
-        Response response = askQuestion (in, question, myGuesses);
-        //System.out.println ("My guesses are: " + myGuesses);
-        if (response.answer.equals("quit")){
-          return;
-        }
-        responses.add(response);
-        if (myGuesses.size()<2) {
-          break;
-        }
-      }
-    }
-    boolean correct = makeGuess(in, myGuesses);
-    String guess;
-    if (!correct){
-      //else didn't guess correctly or had multiple guesses
-      System.out.println ("What were you thinking of?");
-      guess = in.nextLine();
-      guess = guess.toLowerCase();
-      guesses.add(guess);
-      myGuesses.add(guess);
-      getNewQuestion(in, myGuesses);
-    } else {
-      guess = myGuesses.iterator().next();
-    }
-    for (Response response: responses){
-      response.question.add(guess, response.answer);
-    }
-  }
-
+//  public void serialGuess(Scanner in){
+//
+//    HashSet<Short> myGuesses = new HashSet<Short>(guesses);
+//    boolean guessed = false;
+//    ArrayList<NewResponse> responseHistory = new ArrayList<NewResponse>();
+//    for (Question question: questions){
+//      //check to see if this question will narrow the guesses
+//
+//      HashSet<Short> all = new HashSet<Short>(question.yesGuesses);
+//      all.addAll(question.noGuesses);
+//      HashSet<Short> clone =new HashSet<Short>(myGuesses);
+//      clone.retainAll(all);
+//
+//      if (!(question.yesGuesses.containsAll(clone) || question.noGuesses.containsAll(clone))){
+//        //ask the question
+//        NewResponse response = askQuestion (in, question, myGuesses);
+//        //System.out.println ("My guesses are: " + myGuesses);
+//        if (response.answer.equals("quit")){
+//          return;
+//        }
+//        responseHistory.add(response);
+//        if (myGuesses.size()<2) {
+//          break;
+//        }
+//      }
+//    }
+//    boolean correct = makeGuess(in, myGuesses);
+//    String guess;
+//    if (!correct){
+//      //else didn't guess correctly or had multiple guesses
+//      System.out.println ("What were you thinking of?");
+//      guess = in.nextLine();
+//      guess = guess.toLowerCase();
+//      guesses.add(guess);
+//      myGuesses.add(guess);
+//      getNewQuestion(in, myGuesses);
+//    } else {
+//      guess = myGuesses.iterator().next();
+//    }
+//    for (NewResponse response: responseHistory){
+//      response.question.add(guess, response.answer);
+//    }
+//  }
+//
 
   //just a utility function to answer questions with incomplete answers
   public void questionUtil(Scanner in){
     questions = sortByLeastGuessed(questions);
-    ArrayList<Question> sorted = new ArrayList<Question>(questions);
+    ArrayList<NewQuestion> sorted = new ArrayList<NewQuestion>(questions);
     for (int i =0; i< sorted.size(); i++){
       System.out.println (i + ". " + sorted.get(i).question + "(" + sorted.get(i).numGuessesKnown());
     }
@@ -409,8 +433,11 @@ public class Guesser{
           valid = false;
       }
     }
-    Question question = sorted.get(i);
-    HashSet<String> unGuessed = new HashSet<String>(guesses);
+    NewQuestion question = sorted.get(i);
+    HashSet<Short> unGuessed = new HashSet<Short>();
+    for (Guess guess: guessArray){
+      unGuessed.add(guess.guessId);
+    }
     unGuessed.removeAll(question.yesGuesses);
     unGuessed.removeAll(question.noGuesses);
     unGuessed.removeAll(question.maybeGuesses);
@@ -418,7 +445,7 @@ public class Guesser{
     
     System.out.println ("Please answer your question for the following characters");
     System.out.println (question.question);
-    for (String guess: unGuessed){
+    for (Short guess: unGuessed){
       System.out.print (guess + " (y/n/maybe/quit):");
 
       String answer = getQInput(in);
@@ -426,12 +453,6 @@ public class Guesser{
         return;
       }
       question.add(guess, answer);
-    }
-  }
-
-  public void inflateCurrentEntries(int multiplier){
-    for (Question question: questions){
-      question.inflate (multiplier);
     }
   }
 }

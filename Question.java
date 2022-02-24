@@ -1,3 +1,4 @@
+
 import java.util.*;
 import java.io.*;
 
@@ -15,6 +16,8 @@ class Question{
   HashMap <String, Integer> numNos;  //for each guess how many times a user has entered no for this question
   HashMap<String, Integer> numResponses;  //total number of times a user has entered a response to this question either yes, no, or unclear
 
+  boolean verified;  // whether this is a admin verified question
+
   Question (String question){
     this.question = question;
 
@@ -25,6 +28,7 @@ class Question{
     numYeses = new HashMap <String, Integer>();
     numNos = new HashMap <String, Integer>();
     numResponses = new HashMap<String, Integer>();
+    verified = false;
   }
 
 
@@ -38,6 +42,7 @@ class Question{
     addToCount(yesGuesses,numResponses);
     addToCount(noGuesses, numResponses);
     addToCount(maybeGuesses, numResponses);
+    verified = false;
     
   }
 
@@ -113,4 +118,19 @@ class Question{
 
   }
 
+  public void inflate(int multiplier){
+
+        inflate(numYeses, multiplier);
+        inflate(numNos, multiplier);
+        inflate(numResponses, multiplier);
+
+  }
+
+  public void inflate (HashMap<String, Integer> data, int multiplier){
+    for (String key: data.keySet()){
+      int num = data.get(key);
+      num = num * multiplier;
+      data.put (key, num);
+    }
+  }
 }

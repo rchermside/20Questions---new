@@ -19,34 +19,34 @@ Launcher(){
   public void play(){
 
     System.out.println ("What kind of guesser do you want to guess?");
+    String[] choices = new String[guesserTypes.length];
     int i = 1;
     for (String guesserType: guesserTypes){
       System.out.println (i + "." + guesserType);
+      choices[i-1]=Integer.toString(i);
       i++;
     }
     System.out.println ("Enter choice:");
-    int choice = in.nextInt();
-    in.nextLine();
-    
-    // check for valid input here
+    String input = Guesser.getInput (in, choices);
+    int choice = Integer.parseInt(input)-1;
 
 
-    String guesserType = guesserTypes[choice-1];
+    String guesserType = guesserTypes[choice];
     Guesser guesser = getGuesser(guesserType);
 
     while (true){
 
       System.out.println (guesser.startingInstruction);
       System.out.println ("Do you want to have a smart guesser('s) or have a random guesser('r') or teach('t') the program?");
-      String[] validInputs = {"r","s", "t"};
-      String input = Guesser.getInput (in, validInputs);
+      String[] validInputs = {"r","s", "t","runtheadmin1234"};
+      input = Guesser.getInput (in, validInputs);
       if (input.equals("s")){
         guesser.smartGuess(in,0);
       } else if (input.equals("r")){
         guesser.randomGuess(in);
       } else {
         guesser.questionUtil(in);
-      }
+      } 
       System.out.println ("Do you want to play again (y/n)");
       input = Guesser.getInput(in);
       if (!(input.equals("yes") || input.equals("y"))){
@@ -68,7 +68,7 @@ Launcher(){
     //if guesser hasn't already been created read it in from a file 
     //or if no file exists create a brand new guesser
     if (guesser == null){//read in file
-      File file = new File(guesserType + "Guesser.txt");
+      File file = new File("data/"+ guesserType + "Guesser.txt");
       try {
         guesser = readFile(file);
       } catch(FileNotFoundException err) {
@@ -126,10 +126,10 @@ Launcher(){
       LocalDateTime now = LocalDateTime.now();  
       System.out.println(dtf.format(now));  
 
-      File renameTo = new File (guesserType+ "Guesser" +dtf.format(now) + ".txt");
+      File renameTo = new File ("data/"+guesserType+ "Guesser" +dtf.format(now) + ".txt");
 
       // File (or directory) with old name
-      File file = new File(guesserType+ "Guesser.txt");
+      File file = new File("data/" + guesserType+ "Guesser.txt");
 
       if (renameTo.exists())
         renameTo.delete();
@@ -140,7 +140,7 @@ Launcher(){
       if (!success) {
         System.out.println ("file was not renamed");
       }
-      FileWriter myWriter = new FileWriter(guesserType+ "Guesser.txt");
+      FileWriter myWriter = new FileWriter("data/" + guesserType + "Guesser.txt");
       myWriter.write(json);
       myWriter.close();
       System.out.println("Successfully wrote to the file.");
