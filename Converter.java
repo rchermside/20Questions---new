@@ -65,6 +65,7 @@ class Converter{
         newQuestion.numResponses.put(nameLookup.get(guessName), count);
       }
       newQuestion.verify();
+      newQuestions.add(newQuestion);
     }
     return new NewGuesser(oldGuesser.startingInstruction, newQuestions, guessArray);
   }

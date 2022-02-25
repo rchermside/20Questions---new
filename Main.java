@@ -18,7 +18,7 @@ class Main {
 
 
     //Scanner in = new Scanner(System.in);
-    String guesserType = "animal";
+    String guesserType = "dnd";
     Launcher launcher = new Launcher();
     Guesser oldGuesser = launcher.getGuesser(guesserType);
     Converter conv = new Converter();
@@ -30,7 +30,7 @@ class Main {
     //System.out.println (json);
 
     try {
-      FileWriter myWriter = new FileWriter("data/" + "new" + guesserType + "Guesser.txt");
+      FileWriter myWriter = new FileWriter("data/" + "new" + guesserType + "Guesser.json");
       myWriter.write(json);
       myWriter.close();
       System.out.println("Successfully wrote to the file.");
